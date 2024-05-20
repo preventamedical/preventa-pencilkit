@@ -80,6 +80,8 @@ class FLPencilKit: NSObject, FlutterPlatformView {
         result(nil)
       case "save":
         save(pencilKitView: pencilKitView, call: call, result: result)
+      case "savePng":
+        savePng(pencilKitView: pencilKitView, call: call, result: result)
       case "load":
         load(pencilKitView: pencilKitView, call: call, result: result)
       case "getBase64Data":
@@ -109,6 +111,17 @@ class FLPencilKit: NSObject, FlutterPlatformView {
       result(FlutterError(code: "NATIVE_ERROR", message: error.localizedDescription, details: nil))
     }
   }
+    
+    @available(iOS 13, *)
+    private func savePng(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
+      do {
+        let (url, withBase64Data, scale) = parseArguments3(call.arguments)
+          let base64Data = try pencilKitView.savePng(url: url, withBase64Data: withBase64Data, scale: scale)
+        result(base64Data)
+      } catch {
+        result(FlutterError(code: "NATIVE_ERROR", message: error.localizedDescription, details: nil))
+      }
+    }
 
   @available(iOS 13, *)
   private func load(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
@@ -179,6 +192,11 @@ class FLPencilKit: NSObject, FlutterPlatformView {
     guard let arguments = arguments as? [Any] else { fatalError() }
     return (URL(fileURLWithPath: arguments[0] as! String), arguments[1] as! Bool)
   }
+    
+    private func parseArguments3(_ arguments: Any?) -> (URL, Bool, Double) {
+      guard let arguments = arguments as? [Any] else { fatalError() }
+      return (URL(fileURLWithPath: arguments[0] as! String), arguments[1] as! Bool, arguments[2] as! Double)
+    }
 }
 
 @available(iOS 13.0, *)
@@ -338,6 +356,15 @@ private class PencilKitView: UIView {
     try data.write(to: url)
     if withBase64Data {
       return data.base64EncodedString()
+    }
+    return nil
+  }
+    
+    func savePng(url: URL, withBase64Data: Bool, scale: Double) throws -> String? {
+      let data = canvasView.drawing.image(from: canvasView.bounds, scale: scale).pngData()
+      try data?.write(to: url)
+    if withBase64Data {
+        return data!.base64EncodedString()
     }
     return nil
   }

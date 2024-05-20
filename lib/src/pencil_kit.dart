@@ -321,6 +321,8 @@ class PencilKitController {
   Future<String?> save({required String uri, bool withBase64Data = false}) =>
       _channel.invokeMethod('save', <Object>[uri, withBase64Data]);
 
+  Future<String?> savePng({required String uri, bool withBase64Data = false, double scale = 1.0}) =>
+      _channel.invokeMethod('save', <Object>[uri, withBase64Data, scale]);
   /// Load drawing data from file system. The absolute uri of file in filesystem should be retrieved other library like 'path_provider'.
   ///
   /// Throws an [Error] if failed
