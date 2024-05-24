@@ -67,7 +67,7 @@ class FLPencilKit: NSObject, FlutterPlatformView {
         pencilKitView.redo()
         result(nil)
       case "undo":
-        pencilKitView.undo()
+          loadVessels(redVessels: [[100,100], [20,570], [530, 250], [993, 930]], blueVessels: [[105,15], [27,58], [503, 202], [991, 909]], greenVessels: [[109,19], [28,58], [503, 209], [999, 903]])
         result(nil)
       case "show":
         pencilKitView.show()
@@ -80,16 +80,10 @@ class FLPencilKit: NSObject, FlutterPlatformView {
         result(nil)
       case "save":
         save(pencilKitView: pencilKitView, call: call, result: result)
-      case "savePng":
-        savePng(pencilKitView: pencilKitView, call: call, result: result)
       case "load":
         load(pencilKitView: pencilKitView, call: call, result: result)
       case "getBase64Data":
         getBase64Data(pencilKitView: pencilKitView, call: call, result: result)
-      case "getBase64PngData":
-        getBase64PngData(pencilKitView: pencilKitView, call: call, result: result)
-      case "getBase64JpegData":
-        getBase64JpegData(pencilKitView: pencilKitView, call: call, result: result)
       case "loadBase64Data":
         loadBase64Data(pencilKitView: pencilKitView, call: call, result: result)
       case "applyProperties":
@@ -104,24 +98,14 @@ class FLPencilKit: NSObject, FlutterPlatformView {
   @available(iOS 13, *)
   private func save(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
     do {
-      let (url, withBase64Data) = parseArguments(call.arguments)
-      let base64Data = try pencilKitView.save(url: url, withBase64Data: withBase64Data)
+        print(call.arguments as Any)
+      let (url, withBase64Data, scale) = parseArguments3(call.arguments)
+        let base64Data = try pencilKitView.save(url: url, withBase64Data: withBase64Data, scale: scale)
       result(base64Data)
     } catch {
       result(FlutterError(code: "NATIVE_ERROR", message: error.localizedDescription, details: nil))
     }
   }
-    
-    @available(iOS 13, *)
-    private func savePng(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
-      do {
-        let (url, withBase64Data, scale) = parseArguments3(call.arguments)
-          let base64Data = try pencilKitView.savePng(url: url, withBase64Data: withBase64Data, scale: scale)
-        result(base64Data)
-      } catch {
-        result(FlutterError(code: "NATIVE_ERROR", message: error.localizedDescription, details: nil))
-      }
-    }
 
   @available(iOS 13, *)
   private func load(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
@@ -145,35 +129,6 @@ class FLPencilKit: NSObject, FlutterPlatformView {
   }
 
   @available(iOS 13, *)
-  private func getBase64PngData(
-    pencilKitView: PencilKitView,
-    call: FlutterMethodCall,
-    result: FlutterResult
-  ) {
-    if let base64Data = pencilKitView.getBase64PngData(scale: (call.arguments as! [Double])[0]) {
-      result(base64Data)
-    } else {
-      result(FlutterError(code: "NATIVE_ERROR", message: "getBase64PngData failed", details: nil))
-    }
-  }
-
-  @available(iOS 13, *)
-  private func getBase64JpegData(
-    pencilKitView: PencilKitView,
-    call: FlutterMethodCall,
-    result: FlutterResult
-  ) {
-    if let base64Data = pencilKitView.getBase64JpegData(
-      scale: (call.arguments as! [Double])[0],
-      compression: (call.arguments as! [Double])[1]
-    ) {
-      result(base64Data)
-    } else {
-      result(FlutterError(code: "NATIVE_ERROR", message: "getBase64JpegData failed", details: nil))
-    }
-  }
-
-  @available(iOS 13, *)
   private func loadBase64Data(
     pencilKitView: PencilKitView,
     call: FlutterMethodCall,
@@ -192,7 +147,7 @@ class FLPencilKit: NSObject, FlutterPlatformView {
     guard let arguments = arguments as? [Any] else { fatalError() }
     return (URL(fileURLWithPath: arguments[0] as! String), arguments[1] as! Bool)
   }
-    
+
     private func parseArguments3(_ arguments: Any?) -> (URL, Bool, Double) {
       guard let arguments = arguments as? [Any] else { fatalError() }
       return (URL(fileURLWithPath: arguments[0] as! String), arguments[1] as! Bool, arguments[2] as! Double)
@@ -206,7 +161,6 @@ private func createCanvasView(delegate: PKCanvasViewDelegate) -> PKCanvasView {
   v.drawing = PKDrawing()
   v.delegate = delegate
   v.alwaysBounceVertical = false
-  v.allowsFingerDrawing = true
   v.backgroundColor = .clear
   v.isOpaque = false
   return v
@@ -269,7 +223,7 @@ private class PencilKitView: UIView {
   }
 
   func clear() {
-    canvasView.drawing = PKDrawing()
+      canvasView.drawing = PKDrawing()
   }
 
   func undo() {
@@ -348,19 +302,9 @@ private class PencilKitView: UIView {
     default:
       break
     }
-    toolPicker?.selectedTool = canvasView.tool
   }
 
-  func save(url: URL, withBase64Data: Bool) throws -> String? {
-    let data = canvasView.drawing.dataRepresentation()
-    try data.write(to: url)
-    if withBase64Data {
-      return data.base64EncodedString()
-    }
-    return nil
-  }
-    
-    func savePng(url: URL, withBase64Data: Bool, scale: Double) throws -> String? {
+    func save(url: URL, withBase64Data: Bool, scale: Double) throws -> String? {
       let data = canvasView.drawing.image(from: canvasView.bounds, scale: scale).pngData()
       try data?.write(to: url)
     if withBase64Data {
@@ -368,6 +312,46 @@ private class PencilKitView: UIView {
     }
     return nil
   }
+
+    func loadVessels(redVessels: Array, blueVessels: Array, greenVessels: Array)
+    {
+        var strokes: [PKStroke] = []
+
+        redVessels.forEach { xy in
+            print(xy)
+            print(xy[0])
+            print(xy[1])
+            let strokePoints = [
+                PKStrokePoint(location: CGPoint(x: xy[0]+1, y: xy[1]+1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1),
+                PKStrokePoint(location: CGPoint(x: xy[0]-1, y: xy[1]-1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1)
+            ]
+            strokes.append(PKStroke(ink: PKInk(.pen, color: .systemRed), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
+        }
+
+        blueVessels.forEach { xy in
+            print(xy)
+            print(xy[0])
+            print(xy[1])
+            let strokePoints = [
+                PKStrokePoint(location: CGPoint(x: xy[0]+1, y: xy[1]+1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1),
+                PKStrokePoint(location: CGPoint(x: xy[0]-1, y: xy[1]-1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1)
+            ]
+            strokes.append(PKStroke(ink: PKInk(.pen, color: .systemBlue), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
+        }
+
+        greenVessels.forEach { xy in
+            print(xy)
+            print(xy[0])
+            print(xy[1])
+            let strokePoints = [
+                PKStrokePoint(location: CGPoint(x: xy[0]+1, y: xy[1]+1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1),
+                PKStrokePoint(location: CGPoint(x: xy[0]-1, y: xy[1]-1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1)
+            ]
+            strokes.append(PKStroke(ink: PKInk(.pen, color: .systemGreen), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
+        }
+
+        canvasView.drawing = PKDrawing(strokes: strokes)
+    }
 
   func load(url: URL, withBase64Data: Bool) throws -> String? {
     let data = try Data(contentsOf: url)
@@ -387,17 +371,11 @@ private class PencilKitView: UIView {
   }
 
   func getBase64Data() -> String {
-    canvasView.drawing.dataRepresentation().base64EncodedString()
-  }
-
-  func getBase64PngData(scale: Double) -> String? {
-    let image = canvasView.drawing.image(from: canvasView.bounds, scale: scale)
-    return image.pngData()?.base64EncodedString()
-  }
-
-  func getBase64JpegData(scale: Double, compression: Double) -> String? {
-    let image = canvasView.drawing.image(from: canvasView.bounds, scale: scale)
-    return image.jpegData(compressionQuality: compression)?.base64EncodedString()
+      if #available(iOS 14.0, *) {
+          print(canvasView.drawing.strokes.description)
+          print(canvasView.drawing.strokes)
+      }
+      return canvasView.drawing.dataRepresentation().base64EncodedString()
   }
 
   func loadBase64Data(base64Data: String) throws {
