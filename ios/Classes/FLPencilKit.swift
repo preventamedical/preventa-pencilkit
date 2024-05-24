@@ -313,7 +313,7 @@ private class PencilKitView: UIView {
     return nil
   }
 
-    func loadVessels(redVessels: [[int]], blueVessels: [[int]], greenVessels: [[int]])
+    func loadVessels(redVessels: [[Int]], blueVessels: [[Int]], greenVessels: [[Int]])
     {
         var strokes: [PKStroke] = []
 
