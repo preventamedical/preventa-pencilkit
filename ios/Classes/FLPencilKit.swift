@@ -57,7 +57,7 @@ class FLPencilKit: NSObject, FlutterPlatformView {
   }
 
   private func onMethodCall(call: FlutterMethodCall, result: FlutterResult) {
-    if #available(iOS 13.0, *) {
+    if #available(iOS 14.0, *) {
       guard let pencilKitView = _view as? PencilKitView else { return }
       switch call.method {
       case "clear":
@@ -67,7 +67,7 @@ class FLPencilKit: NSObject, FlutterPlatformView {
         pencilKitView.redo()
         result(nil)
       case "undo":
-          loadVessels(redVessels: [[100,100], [20,570], [530, 250], [993, 930]], blueVessels: [[105,15], [27,58], [503, 202], [991, 909]], greenVessels: [[109,19], [28,58], [503, 209], [999, 903]])
+        loadVessels(pencilKitView: pencilKitView, call: call, result: result)
         result(nil)
       case "show":
         pencilKitView.show()
@@ -102,6 +102,17 @@ class FLPencilKit: NSObject, FlutterPlatformView {
       let (url, withBase64Data, scale) = parseArguments3(call.arguments)
         let base64Data = try pencilKitView.save(url: url, withBase64Data: withBase64Data, scale: scale)
       result(base64Data)
+    } catch {
+      result(FlutterError(code: "NATIVE_ERROR", message: error.localizedDescription, details: nil))
+    }
+  }
+
+  @available(iOS 14, *)
+  private func loadVessels(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
+    do {
+      let data = try pencilKitView.loadVessels(redVessels: [[100,100], [20,570], [530, 250], [993, 930]], blueVessels: [[105,15], [27,58], [503, 202], [991, 909]], greenVessels: [[109,19], [28,58], [503, 209], [999, 903]])
+
+      result(data)
     } catch {
       result(FlutterError(code: "NATIVE_ERROR", message: error.localizedDescription, details: nil))
     }
@@ -312,7 +323,7 @@ private class PencilKitView: UIView {
     }
     return nil
   }
-
+    @available(iOS 14.0, *)
     func loadVessels(redVessels: [[Int]], blueVessels: [[Int]], greenVessels: [[Int]])
     {
         var strokes: [PKStroke] = []
