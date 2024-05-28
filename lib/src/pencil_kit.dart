@@ -343,6 +343,8 @@ class PencilKitController {
   Future<String?> load({required String uri, bool withBase64Data = false}) =>
       _channel.invokeMethod('load', <Object>[uri, withBase64Data]);
 
+  Future<String?> loadVessels({required List<List<int>> redVessels, required List<List<int>> blueVessels, required List<List<int>> greenVessels}) =>
+      _channel.invokeMethod('loadVessels', <Object>[redVessels, blueVessels, greenVessels]);
   /// Get current drawing data as base 64 encoded form.
   ///
   /// Throws an [Error] if failed

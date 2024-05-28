@@ -67,7 +67,7 @@ class FLPencilKit: NSObject, FlutterPlatformView {
         pencilKitView.redo()
         result(nil)
       case "undo":
-        loadVessels(pencilKitView: pencilKitView, call: call, result: result)
+        pencilKitView.undo()
         result(nil)
       case "show":
         pencilKitView.show()
@@ -82,6 +82,8 @@ class FLPencilKit: NSObject, FlutterPlatformView {
         save(pencilKitView: pencilKitView, call: call, result: result)
       case "load":
         load(pencilKitView: pencilKitView, call: call, result: result)
+      case "loadVessels":
+         loadVessels(pencilKitView: pencilKitView, call: call, result: result)
       case "getBase64Data":
         getBase64Data(pencilKitView: pencilKitView, call: call, result: result)
       case "loadBase64Data":
@@ -109,13 +111,15 @@ class FLPencilKit: NSObject, FlutterPlatformView {
 
   @available(iOS 14, *)
   private func loadVessels(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
-    do {
-      let data = try pencilKitView.loadVessels(redVessels: [[100,100], [20,570], [530, 250], [993, 930]], blueVessels: [[105,15], [27,58], [503, 202], [991, 909]], greenVessels: [[109,19], [28,58], [503, 209], [999, 903]])
 
-      result(data)
-    } catch {
-      result(FlutterError(code: "NATIVE_ERROR", message: error.localizedDescription, details: nil))
-    }
+      guard let arguments = call.arguments as? [Any] else { fatalError() }
+      print(arguments)
+      print(arguments[0])
+      pencilKitView.loadVessels(
+        redVessels: arguments[0] as! [[Int]],
+        blueVessels: arguments[1] as! [[Int]],
+        greenVessels: arguments[2] as! [[Int]])
+
   }
 
   @available(iOS 13, *)
@@ -323,15 +327,13 @@ private class PencilKitView: UIView {
     }
     return nil
   }
+
     @available(iOS 14.0, *)
     func loadVessels(redVessels: [[Int]], blueVessels: [[Int]], greenVessels: [[Int]])
     {
         var strokes: [PKStroke] = []
 
         redVessels.forEach { xy in
-            print(xy)
-            print(xy[0])
-            print(xy[1])
             let strokePoints = [
                 PKStrokePoint(location: CGPoint(x: xy[0]+1, y: xy[1]+1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1),
                 PKStrokePoint(location: CGPoint(x: xy[0]-1, y: xy[1]-1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1)
@@ -340,9 +342,6 @@ private class PencilKitView: UIView {
         }
 
         blueVessels.forEach { xy in
-            print(xy)
-            print(xy[0])
-            print(xy[1])
             let strokePoints = [
                 PKStrokePoint(location: CGPoint(x: xy[0]+1, y: xy[1]+1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1),
                 PKStrokePoint(location: CGPoint(x: xy[0]-1, y: xy[1]-1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1)
@@ -351,9 +350,6 @@ private class PencilKitView: UIView {
         }
 
         greenVessels.forEach { xy in
-            print(xy)
-            print(xy[0])
-            print(xy[1])
             let strokePoints = [
                 PKStrokePoint(location: CGPoint(x: xy[0]+1, y: xy[1]+1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1),
                 PKStrokePoint(location: CGPoint(x: xy[0]-1, y: xy[1]-1), timeOffset: 0, size: CGSize(width: 3, height: 3), opacity: 0.99, force: 1, azimuth: 1, altitude: 1)
@@ -361,6 +357,7 @@ private class PencilKitView: UIView {
             strokes.append(PKStroke(ink: PKInk(.pen, color: .systemGreen), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
         }
 
+        print(strokes)
         canvasView.drawing = PKDrawing(strokes: strokes)
     }
 

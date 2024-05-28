@@ -54,7 +54,10 @@ class _MyAppState extends State<MyApp> {
             ),
             IconButton(
               icon: const Icon(Icons.undo),
-              onPressed: () => controller.undo(),
+              onPressed: () => controller.loadVessels(
+                  redVessels: [[10, 20], [34, 25], [25, 100], [50, 100]],
+              blueVessels: [[20, 30], [44, 35], [35, 110], [60, 110]],
+              greenVessels: [[40, 80], [124, 100], [100, 200], [200, 200]]),
             ),
             IconButton(
               icon: const Icon(Icons.redo),
