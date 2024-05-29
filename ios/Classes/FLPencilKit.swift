@@ -100,7 +100,6 @@ class FLPencilKit: NSObject, FlutterPlatformView {
   @available(iOS 13, *)
   private func save(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
     do {
-        print(call.arguments as Any)
       let (url, withBase64Data, scale) = parseArguments3(call.arguments)
         let base64Data = try pencilKitView.save(url: url, withBase64Data: withBase64Data, scale: scale)
       result(base64Data)
@@ -111,10 +110,7 @@ class FLPencilKit: NSObject, FlutterPlatformView {
 
   @available(iOS 14, *)
   private func loadVessels(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
-      print(call.arguments)
       guard let arguments = call.arguments as? [Any] else { fatalError() }
-      print(arguments)
-      print(arguments[0])
       pencilKitView.loadVessels(
         redVessels: arguments[0] as! [[Int]],
         blueVessels: arguments[1] as! [[Int]],
@@ -357,7 +353,6 @@ private class PencilKitView: UIView {
             strokes.append(PKStroke(ink: PKInk(.pen, color: .systemGreen), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
         }
 
-        print(strokes)
         canvasView.drawing = PKDrawing(strokes: strokes)
     }
 
