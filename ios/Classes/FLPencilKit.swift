@@ -111,7 +111,7 @@ class FLPencilKit: NSObject, FlutterPlatformView {
 
   @available(iOS 14, *)
   private func loadVessels(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
-
+      print(call.arguments)
       guard let arguments = call.arguments as? [Any] else { fatalError() }
       print(arguments)
       print(arguments[0])
