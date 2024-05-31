@@ -318,11 +318,11 @@ class PencilKitController {
   ///    // handle error
   ///  }
   /// ```
-  Future<String?> save({required String uri, bool withBase64Data = false}) =>
-      _channel.invokeMethod('save', <Object>[uri, withBase64Data]);
+  Future<String?> saveRaw({required String uri, bool withBase64Data = false, double scale = 1.0}) =>
+      _channel.invokeMethod('saveRaw', <Object>[uri, withBase64Data]);
 
   Future<String?> savePng({required String uri, bool withBase64Data = false, double scale = 1.0}) =>
-      _channel.invokeMethod('save', <Object>[uri, withBase64Data, scale]);
+      _channel.invokeMethod('savePng', <Object>[uri, withBase64Data, scale]);
   /// Load drawing data from file system. The absolute uri of file in filesystem should be retrieved other library like 'path_provider'.
   ///
   /// Throws an [Error] if failed
@@ -340,8 +340,8 @@ class PencilKitController {
   ///    // handle error
   ///  }
   /// ```
-  Future<String?> load({required String uri, bool withBase64Data = false}) =>
-      _channel.invokeMethod('load', <Object>[uri, withBase64Data]);
+  Future<String?> loadRaw({required String uri, bool withBase64Data = false}) =>
+      _channel.invokeMethod('loadRaw', <Object>[uri, withBase64Data]);
 
   Future<String?> loadVessels({required List<List<int>> redVessels, required List<List<int>> blueVessels, required List<List<int>> greenVessels}) =>
       _channel.invokeMethod('loadVessels', <Object>[redVessels, blueVessels, greenVessels]);

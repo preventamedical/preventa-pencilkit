@@ -85,7 +85,7 @@ class _MyAppState extends State<MyApp> {
                           final String pathToSave =
                               '${documentDir.path}/drawing';
                           try {
-                            final data = await controller.save(
+                            final data = await controller.saveRaw(
                                 uri: pathToSave, withBase64Data: true);
                             if (kDebugMode) {
                               print(data);
@@ -119,7 +119,7 @@ class _MyAppState extends State<MyApp> {
                           final String pathToLoad =
                               '${documentDir.path}/drawing';
                           try {
-                            final data = await controller.load(
+                            final data = await controller.loadRaw(
                                 uri: pathToLoad, withBase64Data: true);
                             if (kDebugMode) {
                               print(data);
