@@ -124,6 +124,7 @@ class FLPencilKit: NSObject, FlutterPlatformView {
   @available(iOS 14, *)
   private func loadVessels(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
       guard let arguments = call.arguments as? [Any] else { fatalError() }
+      print("loadVessels")
       pencilKitView.loadVessels(
         redVessels: arguments[0] as! [[Int]],
         blueVessels: arguments[1] as! [[Int]],
@@ -357,9 +358,9 @@ private class PencilKitView: UIView {
                 return
             }
             let strokePoints = [
-                PKStrokePoint(location: CGPoint(x: xy[0], y: xy[1]), timeOffset: 0, size: CGSize(width: 2, height: 2), opacity: 1, force: 1, azimuth: 1, altitude: 1),
+                PKStrokePoint(location: CGPoint(x: xy[0], y: xy[1]), timeOffset: 0, size: CGSize(width: 2.7, height: 0.0), opacity: 2, force: 1, azimuth: 1, altitude: 1),
             ]
-            strokes.append(PKStroke(ink: PKInk(.pen, color: UIColor(red: 255, green: 0, blue: 0, alpha: 255)), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
+            strokes.append(PKStroke(ink: PKInk(.pen, color: UIColor(hex: 4294198070)), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
         }
 
         blueVessels.forEach { xy in
@@ -369,9 +370,9 @@ private class PencilKitView: UIView {
                 return
             }
             let strokePoints = [
-                PKStrokePoint(location: CGPoint(x: xy[0], y: xy[1]), timeOffset: 0, size: CGSize(width: 2, height: 2), opacity: 1, force: 1, azimuth: 1, altitude: 1),
+                PKStrokePoint(location: CGPoint(x: xy[0], y: xy[1]), timeOffset: 0, size: CGSize(width: 2.7, height: 0.0), opacity: 2, force: 1, azimuth: 1, altitude: 1),
             ]
-            strokes.append(PKStroke(ink: PKInk(.pen, color: UIColor(red: 0, green: 0, blue: 255, alpha: 255)), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
+            strokes.append(PKStroke(ink: PKInk(.pen, color: UIColor(hex: 4280391411)), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
         }
 
         greenVessels.forEach { xy in
@@ -380,11 +381,19 @@ private class PencilKitView: UIView {
                 return
             }
             let strokePoints = [
-                PKStrokePoint(location: CGPoint(x: xy[0], y: xy[1]), timeOffset: 0, size: CGSize(width: 2, height: 2), opacity: 1, force: 1, azimuth: 1, altitude: 1),
+                PKStrokePoint(location: CGPoint(x: xy[0], y: xy[1]), timeOffset: 0, size: CGSize(width: 2.2, height: 2.2), opacity: 2, force: 1, azimuth: 1, altitude: 1),
             ]
-            strokes.append(PKStroke(ink: PKInk(.pen, color: UIColor(red: 0, green: 255, blue: 0, alpha: 255)), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
+            strokes.append(PKStroke(ink: PKInk(.pen, color: UIColor(hex: 4283215696)), path: PKStrokePath(controlPoints: strokePoints, creationDate: Date())))
         }
+
         canvasView.drawing = PKDrawing(strokes: strokes)
+        /*let drawing = PKDrawing(strokes: strokes)
+        let newCanvasView = createCanvasView(delegate: self)
+        newCanvasView.drawing = drawing
+        canvasView.removeFromSuperview()
+        synchronizeCanvasViewProperties(old: canvasView, new: newCanvasView)
+        canvasView = newCanvasView
+        layoutCanvasView()*/
     }
 
   func loadRaw(url: URL, withBase64Data: Bool) throws -> String? {
