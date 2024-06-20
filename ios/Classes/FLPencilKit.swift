@@ -330,7 +330,7 @@ private class PencilKitView: UIView {
   }
 
     func saveRaw(url: URL, withBase64Data: Bool, scale: Double) throws -> String? {
-        let data = canvasView.drawing.transformed(using: CGAffineTransform(scaleX: scale, y: scale))
+        let data = canvasView.drawing.transformed(using: CGAffineTransform(scaleX: scale, y: scale)).dataRepresentation()
       try data.write(to: url)
     if withBase64Data {
         return data.base64EncodedString()
