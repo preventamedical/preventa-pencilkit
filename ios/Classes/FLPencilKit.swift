@@ -102,8 +102,8 @@ class FLPencilKit: NSObject, FlutterPlatformView {
   @available(iOS 13, *)
   private func saveRaw(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
     do {
-      let (url, withBase64Data) = parseArguments(call.arguments)
-        let base64Data = try pencilKitView.saveRaw(url: url, withBase64Data: withBase64Data)
+      let (url, withBase64Data, scale) = parseArguments3(call.arguments)
+        let base64Data = try pencilKitView.saveRaw(url: url, withBase64Data: withBase64Data, scale: scale)
       result(base64Data)
     } catch {
       result(FlutterError(code: "NATIVE_ERROR", message: error.localizedDescription, details: nil))
@@ -135,8 +135,8 @@ class FLPencilKit: NSObject, FlutterPlatformView {
   @available(iOS 13, *)
   private func loadRaw(pencilKitView: PencilKitView, call: FlutterMethodCall, result: FlutterResult) {
     do {
-      let (url, withBase64Data) = parseArguments(call.arguments)
-      let base64Data = try pencilKitView.loadRaw(url: url, withBase64Data: withBase64Data)
+      let (url, withBase64Data, scale) = parseArguments3(call.arguments)
+      let base64Data = try pencilKitView.loadRaw(url: url, withBase64Data: withBase64Data, scale: scale)
       result(base64Data)
     } catch {
       result(FlutterError(code: "NATIVE_ERROR", message: error.localizedDescription, details: nil))
@@ -329,8 +329,8 @@ private class PencilKitView: UIView {
     }
   }
 
-    func saveRaw(url: URL, withBase64Data: Bool) throws -> String? {
-        let data = canvasView.drawing.dataRepresentation()
+    func saveRaw(url: URL, withBase64Data: Bool, scale: Double) throws -> String? {
+        let data = canvasView.drawing.transformed(using: CGAffineTransform(scaleX: scale, y: scale))
       try data.write(to: url)
     if withBase64Data {
         return data.base64EncodedString()
@@ -396,9 +396,9 @@ private class PencilKitView: UIView {
         layoutCanvasView()*/
     }
 
-  func loadRaw(url: URL, withBase64Data: Bool) throws -> String? {
+  func loadRaw(url: URL, withBase64Data: Bool, scale: Double) throws -> String? {
     let data = try Data(contentsOf: url)
-    let drawing = try PKDrawing(data: data)
+    let drawing = try PKDrawing(data: data).transformed(using: CGAffineTransform(scaleX: scale, y: scale))
 
     let newCanvasView = createCanvasView(delegate: self)
     newCanvasView.drawing = drawing

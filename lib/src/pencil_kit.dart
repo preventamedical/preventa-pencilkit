@@ -319,7 +319,7 @@ class PencilKitController {
   ///  }
   /// ```
   Future<String?> saveRaw({required String uri, bool withBase64Data = false, double scale = 1.0}) =>
-      _channel.invokeMethod('saveRaw', <Object>[uri, withBase64Data]);
+      _channel.invokeMethod('saveRaw', <Object>[uri, withBase64Data, scale]);
 
   Future<String?> savePng({required String uri, bool withBase64Data = false, double scale = 1.0}) =>
       _channel.invokeMethod('savePng', <Object>[uri, withBase64Data, scale]);
@@ -340,10 +340,10 @@ class PencilKitController {
   ///    // handle error
   ///  }
   /// ```
-  Future<String?> loadRaw({required String uri, bool withBase64Data = false}) =>
-      _channel.invokeMethod('loadRaw', <Object>[uri, withBase64Data]);
+  Future<String?> loadRaw({required String uri, bool withBase64Data = false, double scale = 1.0}) =>
+      _channel.invokeMethod('loadRaw', <Object>[uri, withBase64Data, scale]);
 
-  Future<String?> loadVessels({required List<List<int>> redVessels, required List<List<int>> blueVessels, required List<List<int>> greenVessels}) =>
+  Future<String?> loadVessels({required List<dynamic> redVessels, required List<dynamic> blueVessels, required List<dynamic> greenVessels}) =>
       _channel.invokeMethod('loadVessels', <Object>[redVessels, blueVessels, greenVessels]);
   /// Get current drawing data as base 64 encoded form.
   ///
